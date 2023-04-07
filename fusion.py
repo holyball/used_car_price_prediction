@@ -30,7 +30,7 @@ def train_predict_pipeline(x, y, cv, fit_func, ):
     # y_log = np.log(y)
     y_pred = np.empty_like(y)
     # y_pred_log = np.empty_like(y_log)   # 将标签进行对数变换
-    for (train_idx,val_idx) in cv:
+    for n_fold, (train_idx,val_idx) in enumerate(cv):
         x_train = x[train_idx]
         x_val = x[val_idx]
         y_train = y[train_idx]
@@ -41,6 +41,7 @@ def train_predict_pipeline(x, y, cv, fit_func, ):
             model = fit_func(x_train, y_train)
         y_pred[val_idx] = model.predict(x_val)
         model_list.append(model)
+        print(f"训练完第{n_fold}折")
     # y_pred = np.exp(y_pred)
     mae = mean_absolute_error(y, y_pred)
     end_time = time.time()
