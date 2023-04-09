@@ -26,7 +26,7 @@ def fit_catboost(x_train, y_train, x_val=None, y_val=None):
     return model
 
 def fit_ets(x_train, y_train):
-    model = ExtraTreesRegressor(n_estimators=10, 
+    model = ExtraTreesRegressor(n_estimators=1000, 
                                 n_jobs=-1)
     model.fit(x_train, y_train)
     return model
@@ -42,7 +42,7 @@ def fit_rf(x_train, y_train):
     -------
     model: object, 拥有predict方法的模型对象
     """
-    model = RandomForestRegressor(n_estimators=10, 
+    model = RandomForestRegressor(n_estimators=1000, 
                                   n_jobs=-1)
     model.fit(x_train, y_train)
     return model
