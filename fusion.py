@@ -1,10 +1,75 @@
 # 模型融合
 from xgboost import XGBRegressor
 from lightgbm import LGBMRegressor
-from sklearn.ensemble import RandomForestClassifier, ExtraTreesClassifier
+from sklearn.ensemble import RandomForestRegressor, ExtraTreesRegressor
+from catboost import CatBoostRegressor
 import time 
 from sklearn.metrics import mean_absolute_error
 import numpy as np
+
+def fit_catboost(x_train, y_train, x_val=None, y_val=None):
+    model = CatBoostRegressor(iterations=10000,
+                             depth=3,
+                             learning_rate=0.02,
+                             loss_function='MAE',
+                             early_stopping_rounds=50,
+                             verbose=False)
+    if x_val is not None and y_val is not None:
+        model.fit(x_train, 
+                  y_train, 
+                  eval_set=(x_val, y_val), 
+                  use_best_model=True,)
+    else:
+        model.fit(x_train, 
+                  y_train)
+    model.fit(x_train, y_train)
+    return model
+
+def fit_ets(x_train, y_train):
+    model = ExtraTreesRegressor(n_estimators=10, 
+                                n_jobs=-1)
+    model.fit(x_train, y_train)
+    return model
+
+def fit_rf(x_train, y_train):
+    """拟合随机森林模型
+    Parameters
+    ----------
+    x_train: array_like
+    y_train: array_like
+    
+    Returns
+    -------
+    model: object, 拥有predict方法的模型对象
+    """
+    model = RandomForestRegressor(n_estimators=10, 
+                                  n_jobs=-1)
+    model.fit(x_train, y_train)
+    return model
+
+def fit_xgb(x_train, y_train, x_val, y_val):
+    params = {'learning_rate': 0.02,
+              'n_estimators': 10000,
+              'early_stopping_rounds': 50,
+              'verbosity': 0, }
+    model = XGBRegressor(**params)
+    if x_val is not None and y_val is not None:
+        model.fit(x_train, y_train, eval_set=[(x_val, y_val)], verbose=0)
+    else:    
+        model.fit(x_train, y_train)
+    return model
+
+def fit_lgbm(x_train, y_train, x_val=None, y_val=None):
+    params = {'learning_rate': 0.02,
+              'n_estimators': 10000,
+              'early_stopping_round': 50,
+              'verbosity': -1, }
+    model = LGBMRegressor(**params)
+    if x_val is not None and y_val is not None:
+        model.fit(x_train, y_train, eval_set=(x_val, y_val), verbose=-1)
+    else:
+        model.fit(x_train, y_train)
+    return model
 
 def train_predict_pipeline(x, y, cv, fit_func, ):
     """
@@ -23,6 +88,7 @@ def train_predict_pipeline(x, y, cv, fit_func, ):
     y_pred: array_like of shape (#training samples, ), prediction in validation set
     model_list: List[object], model list
     """
+    print(fit_func.__name__)
     model_list = []
     begin_time = time.time()
     x = np.array(x)
