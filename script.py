@@ -90,3 +90,9 @@ if __name__ == "__main__":
         np.transpose([x_test_df.index, weighted_y_pred_test]), 
         columns=columns_res,
         ).to_csv('./result/used_car_submit_0410.csv')
+    
+    # 保存模型
+    import joblib 
+    with open ("./data/models_list.pkl", "wb") as handle:
+        joblib.dump(model_list, handle)
+    

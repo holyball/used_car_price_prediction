@@ -3,9 +3,16 @@ from xgboost import XGBRegressor
 from lightgbm import LGBMRegressor
 from sklearn.ensemble import RandomForestRegressor, ExtraTreesRegressor
 from catboost import CatBoostRegressor
+from sklearn.neural_network import MLPRegressor
 import time 
 from sklearn.metrics import mean_absolute_error
 import numpy as np
+
+def fit_mlp(x_train, y_train):
+    model = MLPRegressor(hidden_layer_sizes=[512,256,128,64,32,16],
+                         activation='relu',
+                         )
+    return model
 
 def fit_catboost(x_train, y_train, x_val=None, y_val=None):
     model = CatBoostRegressor(iterations=10000,
