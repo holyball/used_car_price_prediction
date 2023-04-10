@@ -37,7 +37,7 @@ if __name__ == "__main__":
     mae_list = []
     y_pred_val_list = []
     model_list = []
-    for fit_func in [fit_lgbm, fit_xgb, fit_ets]:
+    for fit_func in [fit_lgbm, fit_xgb, fit_catboost, fit_ets, fit_rf]:
         mae, y_pred_val, models = train_predict_pipeline(x_train_df, y_train_df, cv, fit_func)
         mae_list.append(mae)
         y_pred_val_list.append(y_pred_val)
